@@ -2,6 +2,8 @@ import React from 'react';
 import Layout from '../../components/Layout/Layout';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import axios from 'react';
 
 const Register = () => {
 	const [ name, setName ] = useState('');
@@ -9,10 +11,27 @@ const Register = () => {
 	const [ password, setPassword ] = useState('');
 	const [ phone, setPhone ] = useState('');
 	const [ address, setAddress ] = useState('');
-	const handleSubmit = (e) => {
+	const navigate = useNavigate();
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log(name, email, password, phone, address);
-		toast.success('Register Successful!');
+		try {
+			const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/auth/register`, {
+				name,
+				email,
+				password,
+				phone,
+				address
+			});
+			if (res.data.success) {
+				toast.success(res.data.message);
+				navigate('/login');
+			} else {
+				toast.error(res.data.message);
+			}
+		} catch (error) {
+			console.log(error);
+			toast.error('Something went wrong!');
+		}
 	};
 	return (
 		<Layout title={'Register - Ecommerce App'}>
