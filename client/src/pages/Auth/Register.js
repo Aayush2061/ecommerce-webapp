@@ -1,9 +1,10 @@
 import React from 'react';
 import Layout from '../../components/Layout/Layout';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import axios from 'react';
+import axios from 'axios';
+import '../style/AuthStyle.css';
 
 const Register = () => {
 	const [ name, setName ] = useState('');
@@ -22,8 +23,8 @@ const Register = () => {
 				phone,
 				address
 			});
-			if (res.data.success) {
-				toast.success(res.data.message);
+			if (res && res.data.success) {
+				toast.success(res.data && res.data.message);
 				navigate('/login');
 			} else {
 				toast.error(res.data.message);
@@ -35,8 +36,8 @@ const Register = () => {
 	};
 	return (
 		<Layout title={'Register - Ecommerce App'}>
-			<div className="register">
-				<h1>Register Page</h1>
+			<div className="register form-container">
+				<h4 className="title">Register Page</h4>
 				<form onSubmit={handleSubmit}>
 					<div className="mb-3">
 						<input
@@ -55,7 +56,7 @@ const Register = () => {
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							className="form-control"
-							id="exampleInputName"
+							id="exampleInputEmail"
 							placeholder="Enter Your Email"
 							required
 						/>
@@ -77,7 +78,7 @@ const Register = () => {
 							value={phone}
 							onChange={(e) => setPhone(e.target.value)}
 							className="form-control"
-							id="exampleInputName"
+							id="exampleInputPhone"
 							placeholder="Enter Your Phone Number"
 							required
 						/>
@@ -88,7 +89,7 @@ const Register = () => {
 							value={address}
 							onChange={(e) => setAddress(e.target.value)}
 							className="form-control"
-							id="exampleInputName"
+							id="exampleInputAddress"
 							placeholder="Enter Your Address"
 							required
 						/>
