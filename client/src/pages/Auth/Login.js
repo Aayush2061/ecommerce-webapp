@@ -6,16 +6,16 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../style/AuthStyle.css';
 import { useAuth } from '../../context/auth';
+import { useLocation } from 'react-router-dom';
 
 const Login = () => {
-	const [ name, setName ] = useState('');
-	const [ email, setEmail ] = useState('');
-	const [ password, setPassword ] = useState('');
-	const [ phone, setPhone ] = useState('');
-	const [ address, setAddress ] = useState('');
-	const [ auth, setAuth ] = useAuth();
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [auth, setAuth] = useAuth();
 
 	const navigate = useNavigate();
+	const location = useLocation();
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
@@ -31,7 +31,7 @@ const Login = () => {
 					token: res.data.token
 				});
 				localStorage.setItem('auth', JSON.stringify(res.data));
-				navigate('/');
+				navigate(location.state || '/');
 			} else {
 				toast.error(res.data.message);
 			}
@@ -66,6 +66,11 @@ const Login = () => {
 							placeholder="Enter Your Password"
 							required
 						/>
+					</div>
+					<div className="mb-3">
+						<button type="submit" className="btn btn-primary" onClick={() => { navigate('/forgot-password') }}>
+							Forgot Password
+						</button>
 					</div>
 					<button type="submit" className="btn btn-primary">
 						Submit

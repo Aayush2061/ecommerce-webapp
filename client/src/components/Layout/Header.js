@@ -5,7 +5,7 @@ import { useAuth } from '../../context/auth';
 import toast from 'react-hot-toast';
 
 const Header = () => {
-	const [ auth, setAuth ] = useAuth();
+	const [auth, setAuth] = useAuth();
 	const handleLogout = () => {
 		setAuth({
 			...auth,
@@ -59,13 +59,35 @@ const Header = () => {
 									</li>
 								</React.Fragment>
 							) : (
-								<div>
-									<li className="nav-item">
-										<NavLink onClick={handleLogout} to="/login" className="nav-link">
-											Logout
+								<>
+									<li className="nav-item dropdown">
+										<NavLink
+											className="nav-link dropdown-toggle"
+											href="#"
+											role="button"
+											data-bs-toggle="dropdown"
+											aria-expanded="false"
+										>
+											{auth?.user?.name}
 										</NavLink>
+										<ul className="dropdown-menu">
+											<li>
+												<NavLink to={`/dashboard/${auth?.user?.role === 1 ? 'admin' : 'user'}`} className="dropdown-item">
+													Dashboard
+												</NavLink>
+											</li>
+											<li>
+												<NavLink
+													onClick={handleLogout}
+													to="/login"
+													className="dropdown-item"
+												>
+													Logout
+												</NavLink>
+											</li>
+										</ul>
 									</li>
-								</div>
+								</>
 							)}
 							<li className="nav-item">
 								<NavLink to="/cart" className="nav-link">
@@ -78,10 +100,9 @@ const Header = () => {
         <button className="btn btn-outline-success" type="submit">Search</button>
       </form> */}
 					</div>
-				</div>
-			</nav>
-		</div>
+				</div >
+			</nav >
+		</div >
 	);
 };
-
 export default Header;
