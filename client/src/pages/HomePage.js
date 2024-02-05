@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout/Layout';
-import { useAuth } from '../context/auth';
 import axios from 'axios';
 import Link from 'antd/es/typography/Link';
 import { Checkbox, Radio } from 'antd';
@@ -11,6 +10,19 @@ const HomePage = () => {
 	const [categories, setCategories] = useState([]);
 	const [checked, setChecked] = useState([]);
 	const [radio, setRadio] = useState([])
+	const [total, setTotal] = useState(0);
+	const [page, setPage] = useState(1);
+	const [loading, setLoading] = useState(false)
+
+	//get total count
+	const getTotal = async () => {
+		try {
+			const { data } = await axios.get('/api/v1/product/product-count')
+			setTotal(data?.total)
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	//filter by cat
 	const handleFilter = (value, id) => {
@@ -25,7 +37,9 @@ const HomePage = () => {
 
 	useEffect(() => {
 		getAllCategory();
+		getTotal();
 	}, [])
+
 
 	//get all categories
 	const getAllCategory = async () => {
@@ -39,12 +53,33 @@ const HomePage = () => {
 		}
 	};
 
+	useEffect(() => {
+		if (page === 1) return;
+		loadMore();
+	}, [page])
+
+	//load more
+	const loadMore = async (req, res) => {
+		try {
+			setLoading(true)
+			const { data } = await axios.get(`/api/v1/product/product-list/${page}`)
+			setProducts([...products, ...data?.products])
+			setLoading(false)
+		} catch (error) {
+			console.log(error)
+			setLoading(false)
+		}
+	}
+
 	//get all products
 	const getAllProducts = async () => {
 		try {
-			const { data } = await axios.get('/api/v1/product/get-product')
+			setLoading(true);
+			const { data } = await axios.get(`/api/v1/product/product-list/${page}`)
+			setLoading(false);
 			setProducts(data.products);
 		} catch (error) {
+			setLoading(false)
 			console.log(error)
 		}
 	};
@@ -127,6 +162,19 @@ const HomePage = () => {
 								</div>
 							</Link>
 						))}
+					</div>
+					<div className='m-2 p-3'>
+						{products && products.length < total && (
+							<button
+								className='btn btn-warning'
+								onClick={(e) => {
+									e.preventDefault();
+									setPage(page + 1);
+								}}
+							>
+								{loading ? "Loading..." : "Loadmore"}
+							</button>
+						)}
 					</div>
 				</div>
 			</div>
